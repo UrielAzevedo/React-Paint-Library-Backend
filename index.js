@@ -133,7 +133,7 @@ app.get('/paintingDisplay', (req, resExp) => {
                 year: res.rows[0].year,
                 author_name: res.rows[0].author_name,
                 genre: res.rows[0].genre,
-                file: `https://react-paint-library-backend.herokuapp.com/paintings/static/picture-${imgId}.jpg`
+                file: `https://react-paint-library-backend.herokuapp.com/static/picture-${imgId}.jpg`
                 
             }
             resExp.send(response)
