@@ -3,6 +3,7 @@ const app = express()
 const cors = require('cors')
 const Pool = require('pg').Pool
 const multer = require('multer')
+const fs = require('fs')
 
 const storageDir = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -133,7 +134,8 @@ app.get('/paintingDisplay', (req, resExp) => {
                 year: res.rows[0].year,
                 author_name: res.rows[0].author_name,
                 genre: res.rows[0].genre,
-                file: `https://react-paint-library-backend.herokuapp.com/static/picture-${imgId}.jpg`
+                file: `https://react-paint-library-backend.herokuapp.com/static/picture-${imgId}.jpg`,
+                imgId: imgId
                 
             }
             resExp.send(response)
@@ -168,6 +170,12 @@ app.delete('/paintingDelete', (req, resExp) => {
         text: 'DELETE FROM paintings WHERE id = $1',
         values: [req.body.id]
     }
+
+    const filePath = `./Paintings_img_storage/picture-${req.body.imgId}.jpg`
+
+    fs.unlink(filePath, (err) => {
+        if(err) throw err;
+    })
 
     pool.query(query, (err, res) => {
         if(err){
