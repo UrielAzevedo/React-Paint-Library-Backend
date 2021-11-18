@@ -174,13 +174,11 @@ app.delete('/paintingDelete', (req, resExp) => {
     const filePath = `./Paintings_img_storage/picture-${req.body.imgId}.jpg`
 
     fs.unlink(filePath, (err) => {
-        if(err) throw err;
+        if(err) console.log(err)
     })
 
     pool.query(query, (err, res) => {
-        if(err){
-            console.log(err)
-        }
+        if(err) console.log(err)
     })
 })
 
