@@ -33,7 +33,7 @@ pool.connect()
 
 app.use(express.json())
 
-app.post('/', upload.single('picture'), (req, res) => {
+app.post('/', upload.single('picture'), (req, resExp) => {
     const dateNowImgId = req.file.filename.substring(req.file.filename.indexOf("-") + 1, req.file.filename.lastIndexOf("."))
 
     const values = [req.body.paintName, req.body.yearPainted, req.body.authorName, req.body.genre, dateNowImgId]
@@ -44,6 +44,24 @@ app.post('/', upload.single('picture'), (req, res) => {
             console.log(err)
         }
     })
+})
+
+app.put('/editPainting', (req, resExp) => {
+    
+    const query = {
+        name: 'edit-paint-data',
+        text: 'UPDATE paintings SET name = $1, author_name = $2, year = $3, genre = $4 WHERE id = $5',
+        values: [req.body.name, req.body.author, req.body.year, req.body.genre, req.body.id],
+    }
+
+    pool.query(query, (err, res) => {
+        if (err) {
+            console.log(err)
+        } else {
+            resExp.send("success")
+        }
+    })
+
 })
 
 app.get('/paintings', (req, resExp) => {
@@ -127,7 +145,6 @@ app.get('/paintingDisplay', (req, resExp) => {
             console.log("no data")
             resExp.send(null)
         } else {
-            console.log(res.rows)
             const imgId = res.rows[0].img_id
             const response = {
                 name: res.rows[0].name,
@@ -143,27 +160,27 @@ app.get('/paintingDisplay', (req, resExp) => {
     })
 })
 
-app.put('/editPainting', (req, resExp) => {
-    
+app.get('/hasName', (req, resExp) => {
     const query = {
-        name: 'edit-paint-data',
-        text: 'UPDATE paintings SET name = $1, author_name = $2, year = $3, genre = $4 WHERE id = $5',
-        values: [req.body.name, req.body.author, req.body.year, req.body.genre, req.body.id],
+        name: 'get-name',
+        text: 'SELECT id FROM paintings WHERE name = $1;',
+        values:[req.query.name]
     }
 
     pool.query(query, (err, res) => {
-        if (err) {
+        if(err){
             console.log(err)
-        } else {
-            resExp.send("success")
+        }else{
+            const response = {
+                hasName: (res.rows[0] != undefined ? true : false),
+                id: (res.rows[0] != undefined ? res.rows[0].id : null)
+            }
+            resExp.send(response)
         }
     })
-
 })
 
 app.delete('/paintingDelete', (req, resExp) => {
-
-    console.log(req.body.id)
 
     const query = {
         name: 'delete-painting',
