@@ -34,9 +34,11 @@ pool.connect()
 app.use(express.json())
 
 app.post('/', upload.single('picture'), (req, resExp) => {
+    
+    const atributes = JSON.parse(req.body.atributes)
     const dateNowImgId = req.file.filename.substring(req.file.filename.indexOf("-") + 1, req.file.filename.lastIndexOf("."))
 
-    const values = [req.body.paintName, req.body.yearPainted, req.body.authorName, req.body.genre, dateNowImgId]
+    const values = [atributes.name, atributes.year, atributes.author, atributes.genre, dateNowImgId]
     const updateQury = 'INSERT INTO paintings (name, year, author_name, genre, img_id) VALUES ($1, $2, $3, $4, $5);'
 
     pool.query(updateQury, values, (err, res) => {
@@ -99,7 +101,7 @@ app.get('/paintMiniature', (req, resExp) => {
 
             resExp.send({
                 name: res.rows[0].name,
-                file: `https://react-paint-library-backend.herokuapp.com/static/picture-${imgId}.jpg`,
+                file: `http://localhost:5504/static/picture-${imgId}.jpg`,
             })
         }
     })
@@ -151,7 +153,7 @@ app.get('/paintingDisplay', (req, resExp) => {
                 year: res.rows[0].year,
                 author_name: res.rows[0].author_name,
                 genre: res.rows[0].genre,
-                file: `https://react-paint-library-backend.herokuapp.com/static/picture-${imgId}.jpg`,
+                file: `http://localhost:5504/static/picture-${imgId}.jpg`,
                 imgId: imgId
                 
             }
