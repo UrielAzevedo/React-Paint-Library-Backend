@@ -101,7 +101,7 @@ app.get('/paintMiniature', (req, resExp) => {
 
             resExp.send({
                 name: res.rows[0].name,
-                file: `http://localhost:5504/static/picture-${imgId}.jpg`,
+                file: `https://react-paint-library-backend.herokuapp.com/static/picture-${imgId}.jpg`,
             })
         }
     })
@@ -153,7 +153,7 @@ app.get('/paintingDisplay', (req, resExp) => {
                 year: res.rows[0].year,
                 author_name: res.rows[0].author_name,
                 genre: res.rows[0].genre,
-                file: `http://localhost:5504/static/picture-${imgId}.jpg`,
+                file: `https://react-paint-library-backend.herokuapp.com/static/picture-${imgId}.jpg`,
                 imgId: imgId
                 
             }
