@@ -45,6 +45,8 @@ app.post('/', upload.single('picture'), (req, resExp) => {
         if (err) {
             console.log(err)
         }
+        
+        resExp.end()
     })
 })
 
@@ -60,7 +62,7 @@ app.put('/editPainting', (req, resExp) => {
         if (err) {
             console.log(err)
         } else {
-            resExp.send("success")
+            resExp.end()
         }
     })
 
@@ -74,9 +76,9 @@ app.get('/paintings', (req, resExp) => {
 
     pool.query(query, (err, res) => {
         if (err) {
-            console.log(res.err)
+            console.log(err)
+            resExp.end()
         } else {
-            console.log(res.rows)
             resExp.send(res.rows)
         }
     })
@@ -93,10 +95,11 @@ app.get('/paintMiniature', (req, resExp) => {
     pool.query(query, (err, res) => {
         if (err) {
             console.log(err)
+            resExp.end()
         } else if (!res.rows[0]) {
             console.log("no data")
-        }
-        else {
+            resExp.end()
+        } else {
             const imgId = res.rows[0].img_id
 
             resExp.send({
@@ -118,15 +121,13 @@ app.get('/fetchAllPaintingData', (req, resExp) => {
     pool.query(query, (err, res) => {
         if (err) {
             console.log(err)
+            resExp.end()
         } else {
-            if (res.rows) {
-                const response = {
-                    paintingsIds: res.rows
-                }
-                resExp.send(response)
-            } else {
-                resExp.send({ paintingsIds: null })
+            const response = {
+                paintingsIds: (res.rows ? res.rows : null)
             }
+
+            resExp.send(response)
         }
     })
 
@@ -143,9 +144,10 @@ app.get('/paintingDisplay', (req, resExp) => {
     pool.query(query, (err, res) => {
         if (err) {
             console.log(err)
+            resExp.end()
         } else if (!res.rows[0]) {
             console.log("no data")
-            resExp.send(null)
+            resExp.end()
         } else {
             const imgId = res.rows[0].img_id
             const response = {
@@ -172,6 +174,7 @@ app.get('/hasName', (req, resExp) => {
     pool.query(query, (err, res) => {
         if(err){
             console.log(err)
+            resExp.end()
         }else{
             const response = {
                 hasName: (res.rows[0] != undefined ? true : false),
